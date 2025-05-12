@@ -21,13 +21,17 @@ export default function Login() {
                 <input
                   type='password'
                   name='password'
+                  autoComplete='on'
                   className='py-3 px-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus: shadow-sm'
                   placeholder='password'
                 />
                 <div className='mt-1 text-red-600 min-h-[1rem] text-sm'></div>
               </div>
               <div className='mt-5'>
-                <button className='w-full text-center py-4 px-2 uppercase bg-customOrange hover:bg-red-600 text-white text-sm'>
+                <button
+                  type='submit'
+                  className='w-full text-center py-4 px-2 uppercase bg-customOrange hover:bg-red-600 text-white text-sm'
+                >
                   Đăng Nhập
                 </button>
               </div>

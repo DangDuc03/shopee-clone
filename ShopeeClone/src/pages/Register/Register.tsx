@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { rules } from 'src/utils/rules'
+import { getRules } from 'src/utils/rules'
+import Input from 'src/Components/Input'
 
-interface IFormData {
+export interface IFormData {
   email: string
   password: string
   confirm_password: string
@@ -15,6 +16,8 @@ export default function Register() {
     getValues,
     formState: { errors }
   } = useForm<IFormData>()
+
+  const rules = getRules()
 
   const onSubmit = handleSubmit(
     (data) => {
@@ -34,38 +37,36 @@ export default function Register() {
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng ký</div>
-              <div className='mt-8'>
-                <input
-                  type='email'
-                  className='py-3 px-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus: shadow-sm'
-                  placeholder='email'
-                  {...register('email', rules.email)}
-                />
-                <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors.email?.message}</div>
-              </div>
-              <div className='mt-2'>
-                <input
-                  type='password'
-                  autoComplete='on'
-                  className='py-3 px-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus: shadow-sm'
-                  placeholder='password'
-                  {...register('password', rules.password)}
-                />
-                <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors.password?.message}</div>
-              </div>
-              <div className='mt-2'>
-                <input
-                  type='password'
-                  autoComplete='on'
-                  className='py-3 px-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus: shadow-sm'
-                  placeholder='confirm password'
-                  {...register('confirm_password', {
-                    ...rules.confirm_password,
-                    validate: (value) => value === getValues('password') || 'Nhập lại password không khớp'
-                  })}
-                />
-                <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors.confirm_password?.message}</div>
-              </div>
+              <Input<IFormData>
+                className='mt-8'
+                name='email'
+                placeholder='email'
+                type='email'
+                errorMessage={errors.email?.message}
+                rules={rules.email}
+                register={register}
+              />
+              <Input<IFormData>
+                className='mt-2'
+                name='password'
+                placeholder='password'
+                type='password'
+                autoComplete='on'
+                errorMessage={errors.password?.message}
+                rules={rules.password}
+                register={register}
+              />
+              <Input<IFormData>
+                className='mt-2'
+                name='confirm_password'
+                placeholder='confirm_password'
+                type='password'
+                autoComplete='on'
+                errorMessage={errors.confirm_password?.message}
+                rules={rules.confirm_password}
+                register={register}
+              />
+
               <div className='mt-8'>
                 <button
                   type='submit'

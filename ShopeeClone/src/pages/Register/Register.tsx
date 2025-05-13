@@ -29,7 +29,7 @@ export default function Register() {
   console.log('error: ', errors)
   return (
     <div className='bg-customOrange'>
-      <div className='max-w-7xl mx-auto px-4'>
+      <div className='custom-container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 py-10 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>

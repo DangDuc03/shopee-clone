@@ -3,13 +3,9 @@ import { useForm } from 'react-hook-form'
 import { schema, type Schema } from 'src/utils/rules'
 import Input from 'src/Components/Input'
 import { yupResolver } from '@hookform/resolvers/yup'
-
-// cach 1
-// export interface IFormData {
-//   email: string
-//   password: string
-//   confirm_password: string
-// }
+import { useMutation } from '@tanstack/react-query'
+import { registerAccount } from 'src/apis/auth.api'
+import { omit } from 'lodash'
 
 type IFormData = Schema
 
@@ -17,26 +13,25 @@ export default function Register() {
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors }
   } = useForm<IFormData>({
     // mọi validation logic sẽ được Yup schema đảm nhận, Hiển thị lỗi thông qua formState.errors
     resolver: yupResolver(schema)
   })
 
-  // const rules = getRules()
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<IFormData, 'confirm_password'>) => registerAccount(body)
+  })
 
-  const onSubmit = handleSubmit(
-    (data) => {
-      console.log('data: ', data)
-    },
-    (data) => {
-      const password = getValues('password')
-      console.log('password: ', password)
-    }
-  )
+  const onSubmit = handleSubmit((data) => {
+    const body = omit(data, ['confirm_password'])
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log('register new: ', data)
+      }
+    })
+  })
 
-  console.log('error: ', errors)
   return (
     <div className='bg-customOrange'>
       <div className='custom-container'>
@@ -50,7 +45,6 @@ export default function Register() {
                 placeholder='email'
                 type='email'
                 errorMessage={errors.email?.message}
-                // rules={rules.email}
                 register={register}
               />
               <Input<IFormData>
@@ -60,7 +54,6 @@ export default function Register() {
                 type='password'
                 autoComplete='on'
                 errorMessage={errors.password?.message}
-                // rules={rules.password}
                 register={register}
               />
               <Input<IFormData>

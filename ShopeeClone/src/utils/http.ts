@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from "axios";
+import axios, { type AxiosInstance } from 'axios'
 
 class Http {
   instance: AxiosInstance

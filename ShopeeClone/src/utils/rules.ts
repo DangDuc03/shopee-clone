@@ -48,15 +48,19 @@ import * as yup from 'yup'
 //   }
 // })
 
+const emailRegex =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 // cach 2: validate = yup
 export const schema = yup.object({
   email: yup
     .string()
     .required('Email không được bỏ trống!')
-    .email('Email không đúng định dạng')
     .min(5, 'Độ dài từ 5-160 ký tự')
-    .max(160, 'Độ dài từ 5-160 ký tự'),
+    .max(160, 'Độ dài từ 5-160 ký tự')
+    // .email('Email không đúng định dạng')
+    // custom emailRegex vì mặc định yup.email bắt lỗi cơ bản nên còn thiếu.
+    .matches(emailRegex, 'Email không đúng định dạng !'),
   password: yup
     .string()
     .required('Password không được bỏ trống!')

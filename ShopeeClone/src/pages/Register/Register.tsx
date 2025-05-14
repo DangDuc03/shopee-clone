@@ -1,13 +1,17 @@
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { getRules } from 'src/utils/rules'
+import { schema, type Schema } from 'src/utils/rules'
 import Input from 'src/Components/Input'
+import { yupResolver } from '@hookform/resolvers/yup'
 
-export interface IFormData {
-  email: string
-  password: string
-  confirm_password: string
-}
+// cach 1
+// export interface IFormData {
+//   email: string
+//   password: string
+//   confirm_password: string
+// }
+
+type IFormData = Schema
 
 export default function Register() {
   const {
@@ -15,9 +19,12 @@ export default function Register() {
     handleSubmit,
     getValues,
     formState: { errors }
-  } = useForm<IFormData>()
+  } = useForm<IFormData>({
+    // mọi validation logic sẽ được Yup schema đảm nhận, Hiển thị lỗi thông qua formState.errors
+    resolver: yupResolver(schema)
+  })
 
-  const rules = getRules()
+  // const rules = getRules()
 
   const onSubmit = handleSubmit(
     (data) => {
@@ -43,7 +50,7 @@ export default function Register() {
                 placeholder='email'
                 type='email'
                 errorMessage={errors.email?.message}
-                rules={rules.email}
+                // rules={rules.email}
                 register={register}
               />
               <Input<IFormData>
@@ -53,7 +60,7 @@ export default function Register() {
                 type='password'
                 autoComplete='on'
                 errorMessage={errors.password?.message}
-                rules={rules.password}
+                // rules={rules.password}
                 register={register}
               />
               <Input<IFormData>
@@ -63,7 +70,7 @@ export default function Register() {
                 type='password'
                 autoComplete='on'
                 errorMessage={errors.confirm_password?.message}
-                rules={rules.confirm_password}
+                // rules={rules.confirm_password}
                 register={register}
               />
 

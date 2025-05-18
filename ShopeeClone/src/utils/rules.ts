@@ -78,5 +78,5 @@ export const schema = yup.object({
 export type Schema = yup.InferType<typeof schema>
 
 // schema for login form
-const loginSchema = schema.omit(['confirm_password'])
+export const loginSchema = schema.omit(['confirm_password'])
 export type LoginSchema = yup.InferType<typeof loginSchema>

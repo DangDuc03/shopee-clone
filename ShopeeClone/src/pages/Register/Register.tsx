@@ -6,6 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { registerAccount } from 'src/apis/auth.api'
 import { omit } from 'lodash'
+import { isUnprocessableEntityError } from 'src/utils/utils'
+import type { ResponseAPI } from 'src/types/utils.type'
 
 type IFormData = Schema
 
@@ -13,6 +15,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<IFormData>({
     // mọi validation logic sẽ được Yup schema đảm nhận, Hiển thị lỗi thông qua formState.errors
@@ -28,6 +31,35 @@ export default function Register() {
     registerAccountMutation.mutate(body, {
       onSuccess: (data) => {
         console.log('register new: ', data)
+      },
+      onError: (error) => {
+        type typeErrorResponse = Omit<IFormData, 'confirm_password'>
+        if (isUnprocessableEntityError<ResponseAPI<typeErrorResponse>>(error)) {
+          const formError = error.response?.data.data
+          // cach1
+          if (formError?.email) {
+            // setError vao Form
+            setError('email', {
+              message: formError.email,
+              type: 'Server'
+            })
+          }
+          if (formError?.password) {
+            setError('password', {
+              message: formError.password,
+              type: 'Server'
+            })
+          }
+          // cach 2: sd vong lap
+          // if (formError) {
+          //   Object.keys(formError).forEach((key) => {
+          //     setError(key as keyof typeErrorResponse, {
+          //       message: formError[key as keyof typeErrorResponse],
+          //       type: 'Server'
+          //     })
+          //   })
+          // }
+        }
       }
     })
   })

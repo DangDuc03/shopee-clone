@@ -1,12 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { omit } from 'lodash'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { loginAccount } from 'src/apis/auth.api'
 import Input from 'src/Components/Input'
-import type { ResponseAPI } from 'src/types/utils.type'
+import { type ResponseAPI } from 'src/types/utils.type'
 import { loginSchema, type LoginSchema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 

@@ -1,4 +1,4 @@
-import axios, { AxiosError, HttpStatusCode } from "axios";
+import axios, { AxiosError, HttpStatusCode } from 'axios'
 
 // error is AxiosError<T> là type predicate : Nó kiểm tra xem đó có phải là một AxiosError không
 // Nếu đúng, TypeScript hiểu rằng: error là AxiosError<T>
@@ -9,4 +9,4 @@ export function isAxiosError<T>(error: unknown): error is AxiosError<T> {
 
 export function isUnprocessableEntityError<FormError>(error: unknown): error is AxiosError<FormError> {
   return isAxiosError(error) && error.response?.status === HttpStatusCode.UnprocessableEntity // status 422
-} 
+}

@@ -41,10 +41,10 @@ import * as yup from 'yup'
 //       value: 6,
 //       message: 'Độ dài từ 6-160 ký tự'
 //     },
-//     validate: (value) => {
-//       // Nếu có getValues và password có giá trị, so sánh confirm_password với password
-//       return getValues && getValues('password') === value ? true : 'Nhập lại password không khớp'
-//     }
+// validate: (value) => {
+//   // Nếu có getValues và password có giá trị, so sánh confirm_password với password
+//   return getValues && getValues('password') === value ? true : 'Nhập lại password không khớp'
+// }
 //   }
 // })
 

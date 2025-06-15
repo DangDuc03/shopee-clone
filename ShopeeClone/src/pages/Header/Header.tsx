@@ -1,11 +1,24 @@
+import { divide } from 'lodash'
 import { Link } from 'react-router-dom'
+import Popover from 'src/Components/Popover'
 
 export default function Header() {
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
       <div className='container'>
         <div className='flex justify-end'>
-          <div className='flex items-center py-1 hover:text-gray-300 cursor-pointer mx-3'>
+          {/* Popover language */}
+          <Popover
+            className='flex items-center py-1 hover:text-gray-300 cursor-pointer mx-3'
+            renderPopover={
+              <div className='bg-white relative shadow-sm rounded-sm border border-gray-200'>
+                <div className='flex flex-col py-2 px-3 pr-28 pl-3'>
+                  <button className='py-2 px-3 hover:text-customOrange'>Tiếng Việt</button>
+                  <button className='py-2 px-3 hover:text-customOrange mt-2'>EngLish</button>
+                </div>
+              </div>
+            }
+          >
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -31,8 +44,31 @@ export default function Header() {
             >
               <path strokeLinecap='round' strokeLinejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' />
             </svg>
-          </div>
-          <div className='flex items-center py-1 hover:text-gray-300 cursor-pointer mx-3'>
+          </Popover>
+
+          {/* Popover account */}
+          <Popover
+            className='flex items-center py-1 hover:text-gray-300 cursor-pointer mx-3'
+            renderPopover={
+              <div className='bg-white relative shadow-sm rounded-sm border border-gray-200'>
+                <Link
+                  className='block py-3 px-4 bg-white hover:bg-slate-100 hover:text-customOrange w-full text-left '
+                  to={'/'}
+                >
+                  <span>Tài khoản của tôi</span>
+                </Link>
+                <Link
+                  className='block py-3 px-4 bg-white hover:bg-slate-100 hover:text-customOrange w-full text-left '
+                  to={'/'}
+                >
+                  <span>Đơn mua</span>
+                </Link>
+                <button className='block py-3 px-4 bg-white hover:bg-slate-100 hover:text-customOrange w-full text-left '>
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            }
+          >
             <div className='w-6 h-6 mr-2 flex-shrink-0'>
               <img
                 src='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010'
@@ -41,17 +77,7 @@ export default function Header() {
               />
             </div>
             <div>Dang Cong Duc</div>
-          </div>
-          <div className='flex items-center py-1 hover:text-gray-300 cursor-pointer mx-3'>
-            <div className='w-6 h-6 mr-2 flex-shrink-0'>
-              <img
-                src='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010'
-                alt='avatar'
-                className='w-full h-full object-cover rounded-full'
-              />
-            </div>
-            <div>Dang Cong Duc</div>
-          </div>
+          </Popover>
         </div>
         <div className='grid grid-cols-12 gap-4 mt-4 items-end'>
           <Link to='/' className='col-span-2 ml-5 mb-5 h-8 lg:h-11'>

@@ -10,6 +10,7 @@ import { isUnprocessableEntityError } from 'src/utils/utils'
 import type { ErrorResponseAPI } from 'src/types/utils.type'
 import { toast } from 'react-toastify'
 import Button from 'src/Components/Button'
+import path from 'src/constants/path'
 
 type IFormData = Schema
 
@@ -33,7 +34,7 @@ export default function Register() {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
       onSuccess: () => {
-        navigate('/login')
+        navigate(path.login)
         toast.success('Đăng ký thành công !')
       },
       onError: (error) => {
@@ -115,7 +116,7 @@ export default function Register() {
               </div>
               <div className='flex justify-center mt-8'>
                 <span className='text-gray-400'>Bạn đã có tài khoản ? </span>
-                <Link to='/login' className='text-customOrange ml-1'>
+                <Link to={path.login} className='text-customOrange ml-1'>
                   Đăng nhập
                 </Link>
               </div>

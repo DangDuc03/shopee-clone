@@ -5,7 +5,7 @@ import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AppProvider } from './Contexts/app.context'
+import { AppProvider } from './contexts/app.context'
 
 // Create a client
 const queryClient = new QueryClient({

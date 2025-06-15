@@ -6,17 +6,18 @@ import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { loginAccount } from 'src/apis/auth.api'
 import Input from 'src/Components/Input'
-import { AppContext } from 'src/Contexts/app.context'
+import { AppContext } from 'src/contexts/app.context'
 import { type ErrorResponseAPI } from 'src/types/utils.type'
 import { loginSchema, type LoginSchema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 import { useNavigate } from 'react-router'
 import Button from 'src/Components/Button'
+import path from 'src/constants/path'
 
 type IFormData = LoginSchema
 
 export default function Login() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -34,8 +35,9 @@ export default function Login() {
 
   const onSubmit = handleSubmit((data) => {
     loginAccountMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
+        setProfile(data.data.data.user)
         navigate('/')
         toast.success('Đăng nhập thành công !')
       },
@@ -97,7 +99,7 @@ export default function Login() {
               </div>
               <div className='flex justify-center mt-8'>
                 <span className='text-gray-400'>Bạn mới biết đến Shopee ? </span>
-                <Link to='/register' className='text-customOrange ml-1'>
+                <Link to={path.register} className='text-customOrange ml-1'>
                   Đăng ký
                 </Link>
               </div>

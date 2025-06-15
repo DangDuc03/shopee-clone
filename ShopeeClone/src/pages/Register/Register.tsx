@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { schema, type Schema } from 'src/utils/rules'
 import Input from 'src/Components/Input'
@@ -7,11 +7,13 @@ import { useMutation } from '@tanstack/react-query'
 import { registerAccount } from 'src/apis/auth.api'
 import { omit } from 'lodash'
 import { isUnprocessableEntityError } from 'src/utils/utils'
-import type { ResponseAPI } from 'src/types/utils.type'
+import type { ErrorResponseAPI } from 'src/types/utils.type'
+import { toast } from 'react-toastify'
 
 type IFormData = Schema
 
 export default function Register() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -29,12 +31,13 @@ export default function Register() {
   const onSubmit = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
-      onSuccess: (data) => {
-        console.log('register new: ', data)
+      onSuccess: () => {
+        navigate('/login')
+        toast.success('Đăng ký thành công !')
       },
       onError: (error) => {
         type typeErrorResponse = Omit<IFormData, 'confirm_password'>
-        if (isUnprocessableEntityError<ResponseAPI<typeErrorResponse>>(error)) {
+        if (isUnprocessableEntityError<ErrorResponseAPI<typeErrorResponse>>(error)) {
           const formError = error.response?.data.data
           // cach1
           if (formError?.email) {

@@ -1,17 +1,22 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { loginAccount } from 'src/apis/auth.api'
 import Input from 'src/Components/Input'
-import { type ResponseAPI } from 'src/types/utils.type'
+import { AppContext } from 'src/Contexts/app.context'
+import { type ErrorResponseAPI } from 'src/types/utils.type'
 import { loginSchema, type LoginSchema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
+import { useNavigate } from 'react-router'
 
 type IFormData = LoginSchema
 
 export default function Login() {
+  const { setIsAuthenticated } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -28,13 +33,14 @@ export default function Login() {
 
   const onSubmit = handleSubmit((data) => {
     loginAccountMutation.mutate(data, {
-      onSuccess: (data) => {
-        console.log('Login User: ', data)
+      onSuccess: () => {
+        setIsAuthenticated(true)
+        navigate('/')
         toast.success('Đăng nhập thành công !')
       },
       onError: (error) => {
         type typeErrorResponse = IFormData
-        if (isUnprocessableEntityError<ResponseAPI<typeErrorResponse>>(error)) {
+        if (isUnprocessableEntityError<ErrorResponseAPI<typeErrorResponse>>(error)) {
           const formError = error.response?.data.data
           if (formError?.email) {
             // setError vao Form

@@ -11,6 +11,7 @@ import { type ErrorResponseAPI } from 'src/types/utils.type'
 import { loginSchema, type LoginSchema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 import { useNavigate } from 'react-router'
+import Button from 'src/Components/Button'
 
 type IFormData = LoginSchema
 
@@ -85,12 +86,14 @@ export default function Login() {
                 register={register}
               />
               <div className='mt-5'>
-                <button
+                <Button
                   type='submit'
                   className='w-full text-center py-4 px-2 uppercase bg-customOrange hover:bg-red-600 text-white text-sm'
+                  isLoading={loginAccountMutation.isPending}
+                  disabled={loginAccountMutation.isPending}
                 >
                   Đăng Nhập
-                </button>
+                </Button>
               </div>
               <div className='flex justify-center mt-8'>
                 <span className='text-gray-400'>Bạn mới biết đến Shopee ? </span>

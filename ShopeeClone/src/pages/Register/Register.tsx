@@ -9,6 +9,7 @@ import { omit } from 'lodash'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 import type { ErrorResponseAPI } from 'src/types/utils.type'
 import { toast } from 'react-toastify'
+import Button from 'src/Components/Button'
 
 type IFormData = Schema
 
@@ -103,12 +104,14 @@ export default function Register() {
               />
 
               <div className='mt-8'>
-                <button
+                <Button
                   type='submit'
                   className='w-full text-center py-4 px-2 uppercase bg-customOrange hover:bg-red-600 text-white text-sm'
+                  isLoading={registerAccountMutation.isPending}
+                  disabled={registerAccountMutation.isPending}
                 >
                   Đăng ký
-                </button>
+                </Button>
               </div>
               <div className='flex justify-center mt-8'>
                 <span className='text-gray-400'>Bạn đã có tài khoản ? </span>

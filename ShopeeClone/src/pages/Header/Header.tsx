@@ -152,7 +152,7 @@ export default function Header() {
               </button>
             </div>
           </form>
-          <div className='col-span-1 justify-self-end mr-5'>
+          <div className='col-span-1 justify-self-end mx-5'>
             <Popover
               className=''
               renderPopover={

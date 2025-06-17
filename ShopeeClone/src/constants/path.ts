@@ -1,5 +1,5 @@
 const path = {
-  hone: '/',
+  home: '/',
   login: '/login',
   register: '/register',
   profile: '/profile',

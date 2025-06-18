@@ -1,6 +1,6 @@
 export default function SortProductList() {
   return (
-    <div className='bg-gray-300/40 py-4 px-3'>
+    <div className='bg-gray-300/40 py-4 px-3 mx-3'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex items-center flex-wrap gap-2'>
           <span>Sắp xếp theo</span>

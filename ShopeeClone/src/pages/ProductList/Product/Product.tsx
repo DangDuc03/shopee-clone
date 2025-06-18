@@ -1,33 +1,34 @@
 import { Link } from 'react-router-dom'
+import ProductRating from 'src/Components/ProductRating'
 import path from 'src/constants/path'
+import type { Product as ProductType } from 'src/types/product.type'
+import { formarNumberToSocialStyle, formatCurrency } from 'src/utils/utils'
 
-export default function Product() {
+interface IProps {
+  product: ProductType
+}
+
+export default function Product({ product }: IProps) {
   return (
     <Link to={path.home}>
       <div className='bg-white shadow rounded-sm overflow-hidden hover:translate-y-[-0.0625rem] hover:shadow-lg hover:border hover:border-customOrange duration-100 transition-transform'>
         {/* image */}
         <div className='w-full pt-[100%] relative'>
-          <img
-            src='https://down-vn.img.susercontent.com/file/vn-11134211-7ras8-matprun78tef1b@resize_w900_nl.webp'
-            alt=''
-            className='absolute top-0 left-0 w-full h-full bg-white object-cover'
-          />
+          <img src={product.image} alt='' className='absolute top-0 left-0 w-full h-full bg-white object-cover' />
         </div>
         {/* title */}
         <div className='p-2 overflow-hidden'>
-          <div className='min-h-10 line-clamp-2 text-sm'>
-            Áo Kiểu Tay Phồng Cổ Búp Bê Form Rộng Họa Tiết Sọc Caro Thời Trang Mùa Hè - Hàng mới về
-          </div>
+          <div className='min-h-10 line-clamp-2 text-sm'>{product.name}</div>
         </div>
         {/* price */}
-        <div className='flex items-center mt-3 ml-2 gap-2'>
-          <div className='line-through max-w-[50%] text-gray-500 truncate text-sm'>
+        <div className='flex items-center ml-2 gap-2 pr-1'>
+          <div className='line-through max-w-[40%] text-gray-500 truncate text-xs'>
             <span>₫</span>
-            <span>876.000</span>
+            <span>{formatCurrency(product.price_before_discount)}</span>
           </div>
-          <div className='flex items-center max-w-[50%] text-customOrange truncate'>
+          <div className='flex items-center max-w-[60%] text-customOrange truncate text-sm'>
             <span className='text-sm'>₫</span>
-            <span className=''>560.000</span>
+            <span className=''>{formatCurrency(product.price)}</span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -47,45 +48,10 @@ export default function Product() {
         {/* star & sold */}
         <div className='mt-3 flex items-center justify-start ml-2 pb-2'>
           {/* star */}
-          <div className='flex items-center'>
-            <div className='relative'>
-              <div className='absolute top-0 left-0 h-full overflow-hidden' style={{ width: '50%' }}>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke='currentColor'
-                  className='w-4 h-4 fill-yellow-400 text-yellow-400'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z'
-                  />
-                </svg>
-              </div>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                className='w-4 h-4 fill-current text-gray-300'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z'
-                />
-              </svg>
-            </div>
-            <span className='text-sm'>4.0</span>
-            <div className='bg-gray-200 w-[0.5px] h-3 mx-1'></div>
-          </div>
-
+          <ProductRating rating={product.rating} />
           {/* sold */}
-          <div className='ml-2 text-sm'>
-            <span>Đã bán</span>
-            <span className='ml-1'>138</span>
+          <div className='ml-1 text-xs flex justify-end'>
+            <span className=''>Đã bán {formarNumberToSocialStyle(product.sold)}</span>
           </div>
         </div>
       </div>

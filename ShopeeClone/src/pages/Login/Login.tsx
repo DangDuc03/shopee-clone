@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { loginAccount } from 'src/apis/auth.api'
+import authApi from 'src/apis/auth.api'
 import Input from 'src/Components/Input'
 
 import { type ErrorResponseAPI } from 'src/types/utils.type'
@@ -31,7 +31,7 @@ export default function Login() {
   })
 
   const loginAccountMutation = useMutation({
-    mutationFn: (body: IFormData) => loginAccount(body)
+    mutationFn: (body: IFormData) => authApi.loginAccount(body)
   })
 
   const onSubmit = handleSubmit((data) => {
@@ -71,7 +71,7 @@ export default function Login() {
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng Nhập</div>
-              <Input<IFormData>
+              <Input
                 className='mt-8'
                 name='email'
                 placeholder='email'
@@ -79,7 +79,7 @@ export default function Login() {
                 errorMessage={errors.email?.message}
                 register={register}
               />
-              <Input<IFormData>
+              <Input
                 className='mt-2'
                 name='password'
                 placeholder='password'

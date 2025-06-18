@@ -4,7 +4,7 @@ import { schema, type Schema } from 'src/utils/rules'
 import Input from 'src/Components/Input'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { registerAccount } from 'src/apis/auth.api'
+import authApi from 'src/apis/auth.api'
 import { omit } from 'lodash'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 import type { ErrorResponseAPI } from 'src/types/utils.type'
@@ -27,7 +27,7 @@ export default function Register() {
   })
 
   const registerAccountMutation = useMutation({
-    mutationFn: (body: Omit<IFormData, 'confirm_password'>) => registerAccount(body)
+    mutationFn: (body: Omit<IFormData, 'confirm_password'>) => authApi.registerAccount(body)
   })
 
   const onSubmit = handleSubmit((data) => {
@@ -76,7 +76,7 @@ export default function Register() {
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng ký</div>
-              <Input<IFormData>
+              <Input
                 className='mt-8'
                 name='email'
                 placeholder='email'
@@ -84,7 +84,7 @@ export default function Register() {
                 errorMessage={errors.email?.message}
                 register={register}
               />
-              <Input<IFormData>
+              <Input
                 className='mt-2'
                 name='password'
                 placeholder='password'
@@ -93,7 +93,7 @@ export default function Register() {
                 errorMessage={errors.password?.message}
                 register={register}
               />
-              <Input<IFormData>
+              <Input
                 className='mt-2'
                 name='confirm_password'
                 placeholder='confirm_password'

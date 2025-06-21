@@ -5,7 +5,6 @@ import SortProductList from './SortProductList'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import productApi from 'src/apis/product.api'
 import Pagination from 'src/Components/Pagination'
-import { useState } from 'react'
 import type { ProductList, ProductListConfig } from 'src/types/product.type'
 import { isUndefined, omitBy } from 'lodash'
 
@@ -18,7 +17,7 @@ export default function ProductList() {
   const queryConfig: QueryconfigType = omitBy(
     {
       page: queryParams.page || '1',
-      limit: queryParams.limit,
+      limit: queryParams.limit || '10',
       sort_by: queryParams.sort_by,
       exclude: queryParams.exclude,
       name: queryParams.name,
@@ -51,7 +50,7 @@ export default function ProductList() {
             </div>
             <div className='col-span-9 mx-3'>
               {/* sort */}
-              <SortProductList />
+              <SortProductList queryConfig={queryConfig} pageSize={data.data.data.pagination.page_size} />
               {/* product */}
               <div className='mt-6  grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
                 {data.data.data.products.map((product) => (

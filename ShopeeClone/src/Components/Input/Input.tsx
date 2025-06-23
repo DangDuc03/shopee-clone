@@ -11,27 +11,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export default function Input({
-  type,
   className,
-  placeholder,
   name,
   register,
   rules,
   errorMessage,
-  autoComplete,
   classNameInput = 'py-3 px-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm shadow-sm',
-  classNameError = 'mt-1 text-red-600 min-h-[1.25rem] text-sm'
+  classNameError = 'mt-1 text-red-600 min-h-[1.25rem] text-sm',
+  ...rest
 }: InputProps) {
   const registerResult = register && name ? register(name, rules) : {}
   return (
     <div className={className}>
-      <input
-        type={type}
-        className={classNameInput}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        {...registerResult}
-      />
+      <input className={classNameInput} {...registerResult} {...rest} />
       <div className={classNameError}>{errorMessage}</div>
     </div>
   )

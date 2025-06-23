@@ -1,3 +1,5 @@
+import type { Category } from './category.type'
+
 export interface Product {
   _id: string
   images: string[]
@@ -37,4 +39,5 @@ export interface ProductListConfig {
   price_max?: number
   price_min?: number
   name?: number
+  category?: string
 }

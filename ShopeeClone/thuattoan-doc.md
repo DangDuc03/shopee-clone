@@ -41,3 +41,20 @@
 - Dấu `...` thể hiện phần đã được rút gọn để tránh hiển thị quá nhiều nút
 
 ---
+
+## ⭐ Logic tô màu sao theo index và indexStar
+
+```text
+- index 0: Có 5 cái màu vàng tương ứng từ indexStar 0 - 4 đều màu vàng
+- index 1: Có 4 cái màu vàng tương ứng từ indexStar 0 - 3 đều màu vàng
+- index 2: Có 3 cái màu vàng tương ứng từ indexStar 0 - 2 đều màu vàng
+- index 3: Có 2 cái màu vàng tương ứng từ indexStar 0 - 1 đều màu vàng
+- index 4: Có 1 cái màu vàng tương ứng từ indexStar 0 đều màu vàng
+```
+
+---
+
+**Kết luận:**
+
+- Chúng ta nhận ra là:
+- `indexStar < 5 - index` ⇒ _tô màu vàng_

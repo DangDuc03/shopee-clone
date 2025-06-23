@@ -1,5 +1,5 @@
 const path = {
-  hone: '/',
+  home: '/',
   login: '/login',
   register: '/register',
   profile: '/profile',
@@ -15,6 +15,6 @@ const path = {
     user: '/admin/user',
     category: '/admin/category'
   }
-}
+} as const
 
 export default path

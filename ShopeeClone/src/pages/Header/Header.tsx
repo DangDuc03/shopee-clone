@@ -1,9 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
-import { remove, set } from 'lodash'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { logoutAccount } from 'src/apis/auth.api'
+import authApi from 'src/apis/auth.api'
 import Popover from 'src/Components/Popover'
 import path from 'src/constants/path'
 import { AppContext } from 'src/contexts/app.context'
@@ -11,7 +10,7 @@ import { AppContext } from 'src/contexts/app.context'
 export default function Header() {
   const { setIsAuthenticated, isAuthenticated, setProfile, profile } = useContext(AppContext)
   const logoutMutation = useMutation({
-    mutationFn: () => logoutAccount(),
+    mutationFn: () => authApi.logoutAccount(),
     onSuccess: () => {
       toast.success('Đăng xuất thành công !')
       setIsAuthenticated(false)
@@ -152,7 +151,7 @@ export default function Header() {
               </button>
             </div>
           </form>
-          <div className='col-span-1 justify-self-end mr-5'>
+          <div className='col-span-1 justify-self-end mx-5'>
             <Popover
               className=''
               renderPopover={

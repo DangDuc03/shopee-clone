@@ -17,7 +17,6 @@ class Http {
     // Add a request interceptor
     this.instance.interceptors.request.use(
       (config) => {
-        console.log('request', config)
         if (this.accessToken && config.headers) {
           config.headers.authorization = this.accessToken
           return config
@@ -32,7 +31,6 @@ class Http {
     // Add a response interceptor
     this.instance.interceptors.response.use(
       (response) => {
-        console.log('response', response)
         const { url } = response.config
         if (url === path.login || url === path.register) {
           this.accessToken = (response.data as AuthResponse).data.access_token

@@ -1,6 +1,6 @@
 import { createSearchParams, Link } from 'react-router-dom'
 import path from 'src/constants/path'
-import type { QueryconfigType } from '../ProductList'
+import type { QueryconfigType } from '../../ProductList'
 
 interface IProps {
   queryConfig: QueryconfigType
@@ -42,7 +42,7 @@ export default function RatingStar({ queryConfig }: IProps) {
                     )
                   }
                   return (
-                    <svg viewBox='0 0 30 30' className='w-4 h-4 mr-1'>
+                    <svg viewBox='0 0 30 30' className='w-4 h-4 mr-1' key={indexStar}>
                       <defs>
                         <linearGradient id='star__hollow' x1='50%' x2='50%' y1='0%' y2='99.0177926%'>
                           <stop offset='0%' stopColor='#FFD211' />

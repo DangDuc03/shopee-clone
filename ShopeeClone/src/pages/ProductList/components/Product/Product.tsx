@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import ProductRating from 'src/Components/ProductRating'
 import path from 'src/constants/path'
 import type { Product as ProductType } from 'src/types/product.type'
-import { formarNumberToSocialStyle, formatCurrency } from 'src/utils/utils'
+import { formarNumberToSocialStyle, formatCurrency, generateURLNameId } from 'src/utils/utils'
 
 interface IProps {
   product: ProductType
@@ -10,7 +10,7 @@ interface IProps {
 
 export default function Product({ product }: IProps) {
   return (
-    <Link to={`${path.home}${product._id}`}>
+    <Link to={`${path.home}${generateURLNameId({ name: product.name, _id: product._id })}`}>
       <div className='bg-white shadow rounded-sm overflow-hidden hover:translate-y-[-0.0625rem] hover:shadow-lg hover:border hover:border-customOrange duration-100 transition-transform'>
         {/* image */}
         <div className='w-full pt-[100%] relative'>

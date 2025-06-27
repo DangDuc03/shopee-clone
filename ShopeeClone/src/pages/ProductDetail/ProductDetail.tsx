@@ -4,14 +4,14 @@ import productApi from 'src/apis/product.api'
 import CountDown from 'src/Components/CountDown'
 import InputNumber from 'src/Components/InputNumber'
 import ProductRating from 'src/Components/ProductRating'
-import { formarNumberToSocialStyle, formatCurrency, salePercent } from 'src/utils/utils'
+import { formarNumberToSocialStyle, formatCurrency, getIdFromURLNameId, salePercent } from 'src/utils/utils'
 import DOMPurify from 'dompurify'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Product } from 'src/types/product.type'
 
 export default function ProductDetail() {
-  const { id } = useParams()
-
+  const { nameId } = useParams()
+  const id = getIdFromURLNameId(nameId as string)
   const { data: productDetailData } = useQuery({
     queryKey: ['productDetail'],
     queryFn: () => productApi.getProductDetail(id as string)

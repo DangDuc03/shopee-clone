@@ -5,10 +5,10 @@ const path = {
   profile: '/profile',
   product: '/product',
   cart: '/cart',
-  productDetail: '/:id',
-  historyCart: '/history-cart',
+  productDetail: '/:nameId',
+  historyCart: '/historyCart',
   logout: '/logout',
-  notFound: '/not-found',
+  notFound: '/notFound',
   admin: {
     home: '/admin',
     product: '/admin/product',

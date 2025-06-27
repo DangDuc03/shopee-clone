@@ -6,7 +6,7 @@ import InputNumber from 'src/Components/InputNumber'
 import ProductRating from 'src/Components/ProductRating'
 import { formarNumberToSocialStyle, formatCurrency, salePercent } from 'src/utils/utils'
 import DOMPurify from 'dompurify'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Product } from 'src/types/product.type'
 
 export default function ProductDetail() {
@@ -23,6 +23,7 @@ export default function ProductDetail() {
     () => (product ? product.images.slice(...currentIndexImages) : []),
     [product, currentIndexImages]
   )
+  const imageRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     if (product && product.images.length > 0) {
@@ -40,12 +41,35 @@ export default function ProductDetail() {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
     }
   }
-
   //  currentIndexImages[0] = 0, vì [0, 5] có 2 index: [0] = 0 và [1] = 5
   const prev = () => {
     if (currentIndexImages[0] > 1) {
       setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1])
     }
+  }
+
+  const handleZoomIn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const sizeDiv = event.currentTarget.getBoundingClientRect()
+    console.log(sizeDiv)
+    const image = imageRef.current as HTMLImageElement
+    const { naturalHeight, naturalWidth } = image
+    // cách 1: lấy offsetX, offsetY theo cơ bản nếu xử lý được event bubble
+    const { offsetX, offsetY } = event.nativeEvent
+    // cách 2: lấy offsetX, offsetY nếu k thể xử lý event bubble
+    // const offsetX = event.pageX - (sizeDiv.x + window.scrollX)
+    // const offsetY = event.pageY - (sizeDiv.y + window.scrollY)
+
+    const top = offsetY * (1 - naturalHeight / sizeDiv.height)
+    const left = offsetX * (1 - naturalWidth / sizeDiv.width)
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.top = top + 'px'
+    image.style.left = left + 'px'
+  }
+
+  const handleZoomOut = () => {
+    imageRef.current?.removeAttribute('style')
   }
 
   if (!product) return null
@@ -56,8 +80,16 @@ export default function ProductDetail() {
           <div className='grid grid-cols-12 gap-9'>
             {/* image product */}
             <div className='col-span-5'>
-              <div className='relative w-full pt-[100%]'>
-                <img src={activeImage} className='absolute top-0 left-0 w-full h-full bg-white object-cover' />
+              <div
+                className='relative w-full pt-[100%] overflow-hidden'
+                onMouseMove={handleZoomIn}
+                onMouseLeave={handleZoomOut}
+              >
+                <img
+                  src={activeImage}
+                  className='absolute pointer-events-none top-0 left-0 w-full h-full bg-white object-cover'
+                  ref={imageRef}
+                />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
                 {/* prev */}

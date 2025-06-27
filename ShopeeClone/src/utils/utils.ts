@@ -25,3 +25,7 @@ export function formarNumberToSocialStyle(value: number) {
     .replace('.', ',')
     .toLowerCase()
 }
+
+export function salePercent(original: number, sale: number) {
+  return Math.floor(((original - sale) / original) * 100) + '%'
+}

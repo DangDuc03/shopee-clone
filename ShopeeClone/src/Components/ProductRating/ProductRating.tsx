@@ -1,4 +1,16 @@
-export default function ProductRating({ rating }: { rating: number }) {
+interface IProps {
+  rating: number
+  activeClassName?: string
+  nonActiveClassName?: string
+  includeNumberRating?: string
+}
+
+export default function ProductRating({
+  rating,
+  activeClassName = 'w-3 h-3 fill-yellow-400 text-yellow-400',
+  nonActiveClassName = 'w-3 h-3 fill-current text-gray-300',
+  includeNumberRating = 'text-xs'
+}: IProps) {
   const formatNumberRating = Math.floor(rating * 10) / 10
 
   const formatStarRating = (orderStar: number) => {
@@ -25,8 +37,8 @@ export default function ProductRating({ rating }: { rating: number }) {
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
-                stroke='currentColor'
-                className='w-3 h-3 fill-yellow-400 text-yellow-400'
+                // stroke='currentColor'
+                className={activeClassName}
               >
                 <path
                   strokeLinecap='round'
@@ -39,8 +51,8 @@ export default function ProductRating({ rating }: { rating: number }) {
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
               viewBox='0 0 24 24'
-              stroke='currentColor'
-              className='w-3 h-3 fill-current text-gray-300'
+              // stroke='currentColor'
+              className={nonActiveClassName}
             >
               <path
                 strokeLinecap='round'
@@ -50,8 +62,7 @@ export default function ProductRating({ rating }: { rating: number }) {
             </svg>
           </div>
         ))}
-      <span className='text-xs'>{formatNumberRating}</span>
-      <div className='bg-gray-200 w-[0.5px] h-3 mx-1'></div>
+      <span className={includeNumberRating}>{formatNumberRating}</span>
     </div>
   )
 }

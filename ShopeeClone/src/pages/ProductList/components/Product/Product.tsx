@@ -10,7 +10,7 @@ interface IProps {
 
 export default function Product({ product }: IProps) {
   return (
-    <Link to={path.home}>
+    <Link to={`${path.home}${product._id}`}>
       <div className='bg-white shadow rounded-sm overflow-hidden hover:translate-y-[-0.0625rem] hover:shadow-lg hover:border hover:border-customOrange duration-100 transition-transform'>
         {/* image */}
         <div className='w-full pt-[100%] relative'>
@@ -50,6 +50,7 @@ export default function Product({ product }: IProps) {
           {/* star */}
           <ProductRating rating={product.rating} />
           {/* sold */}
+          <div className='bg-gray-200 w-[0.5px] h-3 mx-1'></div>
           <div className='ml-1 text-xs flex justify-end'>
             <span className=''>Đã bán {formarNumberToSocialStyle(product.sold)}</span>
           </div>

@@ -5,6 +5,7 @@ const path = {
   profile: '/profile',
   product: '/product',
   cart: '/cart',
+  productDetail: '/:id',
   historyCart: '/history-cart',
   logout: '/logout',
   notFound: '/not-found',

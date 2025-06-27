@@ -6,6 +6,8 @@ import InputNumber from 'src/Components/InputNumber'
 import ProductRating from 'src/Components/ProductRating'
 import { formarNumberToSocialStyle, formatCurrency, salePercent } from 'src/utils/utils'
 import DOMPurify from 'dompurify'
+import { useEffect, useMemo, useState } from 'react'
+import type { Product } from 'src/types/product.type'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -15,21 +17,54 @@ export default function ProductDetail() {
     queryFn: () => productApi.getProductDetail(id as string)
   })
   const product = productDetailData?.data.data
+  const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
+  const [activeImage, setActiveImage] = useState('')
+  const CurrentImages = useMemo(
+    () => (product ? product.images.slice(...currentIndexImages) : []),
+    [product, currentIndexImages]
+  )
+
+  useEffect(() => {
+    if (product && product.images.length > 0) {
+      setActiveImage(product.images[0])
+    }
+  }, [product])
+
+  const chooseActiveImage = (img: string) => {
+    setActiveImage(img)
+  }
+
+  //  currentIndexImages[1] = 5, vì [0, 5] có 2 index: [0] = 0 và [1] = 5
+  const next = () => {
+    if (currentIndexImages[1] < (product as Product).images.length) {
+      setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+
+  //  currentIndexImages[0] = 0, vì [0, 5] có 2 index: [0] = 0 và [1] = 5
+  const prev = () => {
+    if (currentIndexImages[0] > 1) {
+      setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
 
   if (!product) return null
-
   return (
     <div className='bg-gray-200 py-6'>
-      <div className='bg-white p-4 shadow'>
-        <div className='custom-container'>
+      <div className='custom-container'>
+        <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             {/* image product */}
             <div className='col-span-5'>
               <div className='relative w-full pt-[100%]'>
-                <img src={product.image} alt='' className='absolute top-0 left-0 w-full h-full bg-white object-cover' />
+                <img src={activeImage} className='absolute top-0 left-0 w-full h-full bg-white object-cover' />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                {/* prev */}
+                <button
+                  className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                  onClick={prev}
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -41,12 +76,12 @@ export default function ProductDetail() {
                     <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5 8.25 12l7.5-7.5' />
                   </svg>
                 </button>
-                {product.images.slice(0, 5).map((img, index) => {
-                  const isActive = index === 0
+                {CurrentImages.map((img) => {
+                  const isActive = img === activeImage
                   return (
-                    <div className='relative w-full pt-[100%]' key={img}>
+                    <div className='relative w-full pt-[100%]' key={img} onMouseEnter={() => chooseActiveImage(img)}>
                       <img
-                        src={product.image}
+                        src={img}
                         alt=''
                         className='absolute top-0 left-0 w-full h-full bg-white object-cover border'
                       />
@@ -54,7 +89,11 @@ export default function ProductDetail() {
                     </div>
                   )
                 })}
-                <button className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                {/* next */}
+                <button
+                  className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                  onClick={next}
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -213,8 +252,8 @@ export default function ProductDetail() {
         </div>
       </div>
       {/* description */}
-      <div className='mt-8 bg-white p-4 shadow'>
-        <div className='custom-container'>
+      <div className='custom-container'>
+        <div className='mt-8 bg-white p-4 shadow'>
           <div className='rounded bg-gray-50 p-4 text-lg capitalize text-slate-700'>mô tả sản phẩm</div>
           <div className='mx-4 mt-5 mb-4 text-sm leading-loose'>
             <div

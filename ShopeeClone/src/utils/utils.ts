@@ -25,3 +25,20 @@ export function formarNumberToSocialStyle(value: number) {
     .replace('.', ',')
     .toLowerCase()
 }
+
+export function salePercent(original: number, sale: number) {
+  return Math.floor(((original - sale) / original) * 100) + '%'
+}
+
+const removeSpecialCharacter = (str: string) =>
+  // eslint-disable-next-line no-useless-escape
+  str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, '')
+
+export const generateURLNameId = ({ name, _id }: { name: string; _id: string }) => {
+  return removeSpecialCharacter(name).replace(/\s/g, '-') + `-i-${_id}`
+}
+
+export const getIdFromURLNameId = (URLId: string) => {
+  const arr = URLId.split('-i-') //  split trả về 1 array
+  return arr[arr.length - 1] // lấy item cuối cùng
+}

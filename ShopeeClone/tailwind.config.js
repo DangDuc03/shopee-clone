@@ -14,7 +14,7 @@ export default {
         logo: '#EE4D2D',
         customOrange: 'rgb(238, 77, 45)'
       }
-    },
+    }
   },
   plugins: [
     plugin(function ({ addComponents, theme }) {
@@ -24,11 +24,10 @@ export default {
           maxWidth: '80rem',
           marginLeft: 'auto',
           marginRight: 'auto',
-          paddingLeft: '1rem',
-          paddingRight: '1rem',
+          paddingLeft: '2rem',
+          paddingRight: '2rem'
         }
       })
     })
-  ],
+  ]
 }
-

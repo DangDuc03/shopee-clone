@@ -1,13 +1,36 @@
-import { useMutation } from '@tanstack/react-query'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { omit } from 'lodash'
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import authApi from 'src/apis/auth.api'
+import purchaseAPI from 'src/apis/purchase.api'
 import Popover from 'src/Components/Popover'
 import path from 'src/constants/path'
+import { PurchaseStatus } from 'src/constants/purchase'
 import { AppContext } from 'src/contexts/app.context'
+import useQueryConfig from 'src/hooks/useQueryConfig'
+import { type Schema, schema } from 'src/utils/rules'
+import emptyCart from 'src/assets/images/empty-cart.webp'
+import { formatCurrency } from 'src/utils/utils'
+import type { Purchase } from 'src/types/purchase.type'
+
+type FormData = Pick<Schema, 'name'>
+const nameSchema = schema.pick(['name'])
+
+const DISPLAY_MAX = 5
 
 export default function Header() {
+  const queryConfig = useQueryConfig()
+  const navigate = useNavigate()
+  const { register, handleSubmit } = useForm<FormData>({
+    defaultValues: {
+      name: ''
+    },
+    resolver: yupResolver(nameSchema)
+  })
   const { setIsAuthenticated, isAuthenticated, setProfile, profile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logoutAccount(),
@@ -21,6 +44,36 @@ export default function Header() {
     logoutMutation.mutate()
     setProfile(null) // Xóa thông tin người dùng khỏi context
   }
+
+  // useQUery sẽ không gọi lại khi component chỉ re-render, nó chỉ gọi lại khi compnt unmount rồi mount lại hoặc giá trị object trong queryKey thay đổi
+  const { data: productInCartData } = useQuery({
+    queryKey: ['purchases', { status: PurchaseStatus.inCart }],
+    queryFn: () => purchaseAPI.getListPurchases({ status: PurchaseStatus.inCart })
+  })
+
+  const productIncart = productInCartData?.data.data as Purchase[]
+  console.log('productIncart: ', productIncart)
+
+  const handleSubmitSearch = handleSubmit((data) => {
+    console.log('data search: ', data)
+    const config = queryConfig.order
+      ? omit(
+          {
+            ...queryConfig,
+            name: data.name
+          },
+          ['order', 'sort_by']
+        )
+      : {
+          ...queryConfig,
+          name: data.name
+        }
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(config).toString()
+    })
+  })
+
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
       <div className='container'>
@@ -91,14 +144,23 @@ export default function Header() {
                 </div>
               }
             >
-              <div className='w-6 h-6 mr-2 flex-shrink-0'>
-                <img
-                  src='https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?20200919003010'
-                  alt='avatar'
-                  className='w-full h-full object-cover rounded-full'
-                />
+              <div className='mr-2 flex items-center justify-center flex-shrink-0'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='w-6 h-5 object-cover rounded-full mr-1'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z'
+                  />
+                </svg>
+                <div>{profile ? profile.email || profile.name : 'User'}</div>
               </div>
-              <div>{profile ? profile.email || profile.name : 'User'}</div>
             </Popover>
           )}
           {/* before login */}
@@ -125,13 +187,14 @@ export default function Header() {
               </g>
             </svg>
           </Link>
-          <form className='col-span-9'>
+          {/* search */}
+          <form className='col-span-9' onSubmit={handleSubmitSearch}>
             <div className='bg-white rounded-sm p-1 flex'>
               <input
                 placeholder='FreeShip Đơn từ 0Đ'
                 type='text'
-                name='search'
                 className='text-black px-3 py-2 flex-grow border-none outline-none'
+                {...register('name')}
               />
               <button className='rounded-sm py-2 px-6 flex-shrink-0 bg-customOrange hover:opacity-90'>
                 <svg
@@ -157,45 +220,63 @@ export default function Header() {
               renderPopover={
                 <div className='bg-white relative shadow-sm rounded-sm border border-gray-200 max-w-[400px] text-sm'>
                   <div className='p-2'>
-                    <div className='text-gray-400 capitalize'>Sản phẩm mới thêm</div>
-                    <div className='mt-5'>
-                      <div className='mt-4 flex'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            className='w-12 h-12 object-cover rounded-sm'
-                            src='https://down-vn.img.susercontent.com/file/vn-11134207-7ra0g-m9klco9u89dad2'
-                            alt='Ảnh Xinh'
-                          />
+                    {productInCartData ? (
+                      <>
+                        <div className='text-gray-400 capitalize'>Sản phẩm mới thêm</div>
+                        <div className='mt-5'>
+                          {productIncart.slice(0, DISPLAY_MAX).map((data) => {
+                            return (
+                              <div className='mt-2 py-2 flex hover:bg-slate-100 shadow-sm' key={data.product._id}>
+                                <div className='flex-shrink-0'>
+                                  <img
+                                    className='w-10 h-10 object-cover rounded-sm'
+                                    src={data.product.image}
+                                    alt={data.product.name}
+                                  />
+                                </div>
+                                {/*truncate: tên dài quá sẽ hiển thị dấu ... */}
+                                <div className='flex-grow ml-2 overflow-hidden'>
+                                  <div className='truncate'>{data.product.name}</div>
+                                </div>
+                                <div className='ml-2 flex-shrink-0'>
+                                  <span className='text-customOrange'>
+                                    ₫{formatCurrency(Number(data.product.price))}
+                                  </span>
+                                </div>
+                              </div>
+                            )
+                          })}
                         </div>
-                        {/* truncate: tên dài quá sẽ hiển thị dấu ... */}
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            FAERIE Áo sơ mi kiểu buộc nơ phối viền ren tay bồng - DAISY TOP
+                        {/* button xem giỏ hàng  */}
+                        <div className='mt-6 flex items-center justify-between'>
+                          <div className='text-xs capitalize text-gray-400'>
+                            {' '}
+                            {productIncart.length} sản phẩm trong giỏ hàng
                           </div>
+                          <button className='capitalize bg-customOrange hover:opacity-80 px-4 py-2 rounded-sm text-white'>
+                            Xem giỏ hàng
+                          </button>
                         </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-customOrange'>₫189.000</span>
-                        </div>
+                      </>
+                    ) : (
+                      <div className='p-10 flex flex-col items-center justify-center w-[350px] h-[200px]'>
+                        <img className='w-32 h-32 object-contain' src={emptyCart} alt='empty-cart' />
+                        <span className=' text-slate-300 capitalize'> Chưa có sản phẩm</span>
                       </div>
-                    </div>
-                    <div className='mt-6 flex items-center justify-between'>
-                      <div className='text-xs capitalize text-gray-400'>Thêm hàng vào giỏ</div>
-                      <button className='capitalize bg-customOrange hover:opacity-80 px-4 py-2 rounded-sm text-white'>
-                        Xem giỏ hàng
-                      </button>
-                    </div>
+                    )}
                   </div>
                 </div>
               }
             >
-              <Link to='/'>
+              {/* wheel */}
+              <Link to='/' className='relative'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
                   viewBox='0 0 24 24'
                   strokeWidth={1.5}
                   stroke='currentColor'
-                  className='size-8'
+                  className='w-10 h-10 mr-2'
                 >
                   <path
                     strokeLinecap='round'
@@ -203,6 +284,9 @@ export default function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
                   />
                 </svg>
+                <div className='absolute top-[-5px] left-[20px] bg-white/85 hover:bg-white text-customOrange font-semibold text-xs px-[10px] py-[2px] rounded-full'>
+                  {productInCartData ? productIncart.length : ''}
+                </div>
               </Link>
             </Popover>
           </div>

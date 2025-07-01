@@ -1,14 +1,13 @@
-import { createSearchParams, data, Link, useNavigate } from 'react-router-dom'
+import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Button from 'src/Components/Button'
 import path from 'src/constants/path'
-import type { QueryconfigType } from '../ProductList'
+import type { QueryconfigType } from '../../ProductList'
 import type { Category } from 'src/types/category.type'
 import classNames from 'classnames'
 import InputNumber from 'src/Components/InputNumber'
 import { useForm, Controller } from 'react-hook-form'
 import { priceSchema, type PriceSchema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { formatCurrency } from 'src/utils/utils'
 import RatingStar from '../RatingStar'
 import { omit } from 'lodash'
 
@@ -22,7 +21,7 @@ type FormDataPrice = PriceSchema
 export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
   const navigate = useNavigate()
   const { category } = queryConfig
-  const { control, watch, formState, handleSubmit, trigger } = useForm<FormDataPrice>({
+  const { control, formState, handleSubmit, trigger } = useForm<FormDataPrice>({
     defaultValues: {
       price_min: '',
       price_max: ''
@@ -30,10 +29,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
     resolver: yupResolver(priceSchema)
   })
 
-  const valueForm = watch()
-  console.log('valueForm: ', valueForm)
   const { errors } = formState
-  console.log('errors: ', errors)
 
   const onSubmit = handleSubmit((data) => {
     navigate({

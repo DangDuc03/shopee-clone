@@ -27,18 +27,18 @@ export default function Register() {
   })
 
   const registerAccountMutation = useMutation({
-    mutationFn: (body: Omit<IFormData, 'confirm_password'>) => authApi.registerAccount(body)
+    mutationFn: (body: Omit<IFormData, 'confirm_password' | 'name'>) => authApi.registerAccount(body)
   })
 
   const onSubmit = handleSubmit((data) => {
-    const body = omit(data, ['confirm_password'])
+    const body = omit(data, ['confirm_password', 'name'])
     registerAccountMutation.mutate(body, {
       onSuccess: () => {
         navigate(path.login)
         toast.success('Đăng ký thành công !')
       },
       onError: (error) => {
-        type typeErrorResponse = Omit<IFormData, 'confirm_password'>
+        type typeErrorResponse = Omit<IFormData, 'confirm_password' | 'name'>
         if (isUnprocessableEntityError<ErrorResponseAPI<typeErrorResponse>>(error)) {
           const formError = error.response?.data.data
           // cach1

@@ -1,24 +1,55 @@
-import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { data, useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import CountDown from 'src/Components/CountDown'
-import InputNumber from 'src/Components/InputNumber'
 import ProductRating from 'src/Components/ProductRating'
 import { formarNumberToSocialStyle, formatCurrency, getIdFromURLNameId, salePercent } from 'src/utils/utils'
 import DOMPurify from 'dompurify'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Product } from 'src/types/product.type'
+import type { Product as ProductType, ProductListConfig } from 'src/types/product.type'
+import Product from '../ProductList/components/Product'
+import QuantityController from 'src/Components/QuantityController'
+import purchaseAPI from 'src/apis/purchase.api'
+import { PurchaseStatus } from 'src/constants/purchase'
+import { toast } from 'react-toastify'
+
+type FormAddToCart = {
+  product_id: string
+  buy_count: number
+}
+
+export type QueryconfigType = {
+  [key in keyof ProductListConfig]: string
+}
 
 export default function ProductDetail() {
+  const queryClient = useQueryClient()
+  const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromURLNameId(nameId as string)
   const { data: productDetailData } = useQuery({
-    queryKey: ['productDetail'],
+    queryKey: ['productDetail', id],
     queryFn: () => productApi.getProductDetail(id as string)
   })
   const product = productDetailData?.data.data
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
-  const [activeImage, setActiveImage] = useState('')
+  const [activeImage, setActiveImage] = useState('empty')
+
+  // generate Similar products
+  const queryConfig: ProductListConfig = { limit: 10, page: 1, category: product?.category._id }
+  const { data: ProductData } = useQuery({
+    queryKey: ['products', queryConfig],
+    queryFn: () => {
+      return productApi.getProducts(queryConfig)
+    },
+    staleTime: 3 * 60 * 1000,
+    enabled: Boolean(product)
+  })
+
+  const addToCartMutaion = useMutation({
+    mutationFn: (body: FormAddToCart) => purchaseAPI.addToCart(body)
+  })
+
   const CurrentImages = useMemo(
     () => (product ? product.images.slice(...currentIndexImages) : []),
     [product, currentIndexImages]
@@ -37,7 +68,7 @@ export default function ProductDetail() {
 
   //  currentIndexImages[1] = 5, vì [0, 5] có 2 index: [0] = 0 và [1] = 5
   const next = () => {
-    if (currentIndexImages[1] < (product as Product).images.length) {
+    if (currentIndexImages[1] < (product as ProductType).images.length) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
     }
   }
@@ -50,7 +81,7 @@ export default function ProductDetail() {
 
   const handleZoomIn = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const sizeDiv = event.currentTarget.getBoundingClientRect()
-    console.log(sizeDiv)
+
     const image = imageRef.current as HTMLImageElement
     const { naturalHeight, naturalWidth } = image
     // cách 1: lấy offsetX, offsetY theo cơ bản nếu xử lý được event bubble
@@ -70,6 +101,24 @@ export default function ProductDetail() {
 
   const handleZoomOut = () => {
     imageRef.current?.removeAttribute('style')
+  }
+
+  const handleQuantity = (value: number) => {
+    setBuyCount(value)
+  }
+
+  const addToCart = () => {
+    addToCartMutaion.mutate(
+      { buy_count: buyCount, product_id: product?._id as string },
+      {
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({
+            queryKey: ['purchases', { status: PurchaseStatus.inCart }]
+          }),
+            toast.success(data.data.message, { autoClose: 1500 })
+        }
+      }
+    )
   }
 
   if (!product) return null
@@ -219,45 +268,20 @@ export default function ProductDetail() {
                   </div>
                 </div>
               </div>
-              {/* add product */}
-              <div className='mt-8 flex items-center'>
+              {/* quantity product */}
+              <div className='mt-8 flex items-center gap-5'>
                 <div className='capitalize text-gray-500'>Số lượng</div>
-                <div className='ml-10 flex items-center'>
-                  {/* minus & plus*/}
-                  <button className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='w-5 h-5'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M5 12h14' />
-                    </svg>
-                  </button>
-                  <InputNumber
-                    value={1}
-                    classNameError='hidden'
-                    classNameInput='w-14 h-8 border-t border-b border-gray-300 p-1 text-center outline-none text-customOrange'
-                  />
-                  <button className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='w-5 h-5'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                    </svg>
-                  </button>
-                  <div className='ml-6 text-sm text-gray-500'>{product.quantity} Sản phẩm có sẵn</div>
-                </div>
+                <QuantityController
+                  onIncrease={handleQuantity}
+                  onDecrease={handleQuantity}
+                  onChangeInput={handleQuantity}
+                  value={buyCount}
+                  max={product.quantity}
+                />
+                <div className='ml-6 text-sm text-gray-500'>{product.quantity} Sản phẩm có sẵn</div>
               </div>
               {/* button add */}
-              <div className='mt-10 flex items-center'>
+              <div onClick={addToCart} className='mt-10 flex items-center'>
                 <div className='flex px-6 h-12 justify-center items-center text-customOrange bg-customOrange/10 hover:bg-customOrange/5 border border-customOrange text-sm capitalize cursor-pointer'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -294,6 +318,20 @@ export default function ProductDetail() {
               }}
             />
           </div>
+        </div>
+      </div>
+      {/* Similar products */}
+      <div className='custom-container'>
+        <div className='mt-8 bg-white p-4 shadow'>
+          {ProductData && (
+            <div className='mt-6  grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4'>
+              {ProductData.data.data.products.map((product) => (
+                <div className='col-span-1' key={product._id}>
+                  <Product product={product} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

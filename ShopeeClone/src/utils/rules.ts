@@ -24,7 +24,8 @@ export const schema = yup.object({
     .min(6, 'Độ dài từ 6-160 ký tự')
     .max(160, 'Độ dài từ 6-160 ký tự')
     // check confirm password
-    .oneOf([yup.ref('password')], 'Nhập lại password không khớp')
+    .oneOf([yup.ref('password')], 'Nhập lại password không khớp'),
+  name: yup.string().trim().required('Name là bắt buộc')
 })
 
 function testPriceMinMax(this: yup.TestContext<yup.AnyObject>) {
@@ -52,5 +53,5 @@ export type Schema = yup.InferType<typeof schema>
 export type PriceSchema = yup.InferType<typeof priceSchema>
 
 // schema for login form
-export const loginSchema = schema.omit(['confirm_password'])
+export const loginSchema = schema.omit(['confirm_password', 'name'])
 export type LoginSchema = yup.InferType<typeof loginSchema>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import InputNumber, { type InputNumberProps } from '../InputNumber'
 
 interface QuantityProps extends InputNumberProps {
@@ -17,6 +18,9 @@ export default function QuantityController({
   value,
   ...rest
 }: QuantityProps) {
+  // mục đích giúp component đa dạng hơn, khi ng dùng k truyền value từ bên ngoài vẫn có thể thực hiện được
+  const [localValue, setLocalValue] = useState<number>(Number(value || 0))
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(event.target.value)
     if (max !== undefined && _value > max) {
@@ -25,10 +29,11 @@ export default function QuantityController({
       return (_value = 1)
     }
     onChangeInput && onChangeInput(_value)
+    setLocalValue(_value)
   }
 
   const handleIncrease = () => {
-    let _value = Number(value) + 1
+    let _value = localValue + 1
     console.log('_value: ', _value)
     if (max !== undefined && _value > max) {
       return (_value = max)
@@ -37,15 +42,17 @@ export default function QuantityController({
     }
 
     onIncrease && onIncrease(_value)
+    setLocalValue(_value)
   }
 
   const handleDecrease = () => {
-    let _value = Number(value) - 1
+    let _value = localValue - 1
     if (_value < 1) {
       return (value = 1)
     }
 
     onDecrease && onDecrease(_value)
+    setLocalValue(_value)
   }
   return (
     <div className={` flex items-center` + classNameWrapper}>

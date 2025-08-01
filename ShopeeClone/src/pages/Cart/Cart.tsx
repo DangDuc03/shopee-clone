@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import purchaseAPI from 'src/apis/purchase.api'
 import Button from 'src/Components/Button'
@@ -9,6 +9,7 @@ import { PurchaseStatus } from 'src/constants/purchase'
 import { formatCurrency, generateURLNameId } from 'src/utils/utils'
 import type { Purchase } from 'src/types/purchase.type'
 import { produce } from 'immer'
+import { debounce, keyBy } from 'lodash'
 
 interface extendPurchasesProps extends Purchase {
   distable: boolean
@@ -17,7 +18,7 @@ interface extendPurchasesProps extends Purchase {
 
 export default function Cart() {
   const [extendPurchases, setExtendPurchases] = useState<extendPurchasesProps[]>([])
-  const { data: productInCartData } = useQuery({
+  const { data: productInCartData, refetch } = useQuery({
     queryKey: ['purchases', { status: PurchaseStatus.inCart }],
     queryFn: () => purchaseAPI.getListPurchases({ status: PurchaseStatus.inCart })
   })
@@ -26,20 +27,23 @@ export default function Cart() {
   const isAllChecked = extendPurchases.every((data) => data.checked)
 
   useEffect(() => {
-    setExtendPurchases(
-      listProductIncart?.map((data) => ({
-        ...data,
-        distable: false,
-        checked: false
-      })) || []
-    )
+    setExtendPurchases((prev) => {
+      const extendPurcahsesOject = keyBy(prev, '_id')
+      return (
+        listProductIncart?.map((purchase) => ({
+          ...purchase,
+          distable: false,
+          checked: Boolean(extendPurcahsesOject[purchase._id]?.distable)
+        })) || []
+      )
+    })
   }, [listProductIncart])
 
-  const handleChecked = (productIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChecked = (purchasesIndex: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
     // draft đại diện cho giá trị prev của extendPurchases
     setExtendPurchases(
       produce((draft) => {
-        draft[productIndex].checked = event.target.checked
+        draft[purchasesIndex].checked = event.target.checked
       })
       // cach truyen thong
       // (prev) => {
@@ -60,6 +64,37 @@ export default function Cart() {
         checked: !isAllChecked
       }))
     })
+  }
+
+  const updatePurchaseMutation = useMutation({
+    mutationFn: purchaseAPI.updatePurchases,
+    onSuccess: (_, { buy_count }) => {
+      refetch()
+      console.log('success', buy_count)
+    }
+  })
+
+  const debounceUpdateQuantity = useRef(
+    debounce(
+      (product_id: string, value: number) =>
+        updatePurchaseMutation.mutate({
+          product_id,
+          buy_count: value
+        }),
+      200
+    )
+  ).current
+
+  const handleQuantity = (purchasesIndex: number, value: number) => {
+    const purchase = extendPurchases[purchasesIndex]
+    setExtendPurchases(
+      produce((draft) => {
+        draft[purchasesIndex].buy_count = value
+        // draft[purchasesIndex].distable = true // Khi click tăng/ giảm, phải distable input k cho ng dùng nhập vào lúc call api
+      })
+    )
+    debounceUpdateQuantity(purchase.product._id, value)
+    console.log('change')
   }
 
   return (
@@ -145,6 +180,10 @@ export default function Cart() {
                           max={purchases.product.quantity}
                           value={purchases.buy_count}
                           classNameWrapper='flex items-center ml-2'
+                          onIncrease={(value) => handleQuantity(index, value)}
+                          onDecrease={(value) => handleQuantity(index, value)}
+                          onChangeInput={(value) => handleQuantity(index, value)}
+                          // disabled={purchases.distable}
                         />
                       </div>
                       {/* total price */}

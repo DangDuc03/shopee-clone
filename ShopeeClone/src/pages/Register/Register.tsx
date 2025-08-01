@@ -12,7 +12,7 @@ import { toast } from 'react-toastify'
 import Button from 'src/Components/Button'
 import path from 'src/constants/path'
 
-type IFormData = Schema
+type IFormData = Omit<Schema, 'name'>
 
 export default function Register() {
   const navigate = useNavigate()
@@ -23,15 +23,15 @@ export default function Register() {
     formState: { errors }
   } = useForm<IFormData>({
     // mọi validation logic sẽ được Yup schema đảm nhận, Hiển thị lỗi thông qua formState.errors
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema.omit(['name']))
   })
 
   const registerAccountMutation = useMutation({
-    mutationFn: (body: Omit<IFormData, 'confirm_password' | 'name'>) => authApi.registerAccount(body)
+    mutationFn: (body: Omit<IFormData, 'confirm_password'>) => authApi.registerAccount(body)
   })
 
   const onSubmit = handleSubmit((data) => {
-    const body = omit(data, ['confirm_password', 'name'])
+    const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
       onSuccess: () => {
         navigate(path.login)
@@ -72,9 +72,9 @@ export default function Register() {
   return (
     <div className='bg-customOrange'>
       <div className='custom-container'>
-        <div className='grid grid-cols-1 lg:grid-cols-5 py-10 lg:py-32 lg:pr-10'>
+        <div className='grid grid-cols-1 py-10 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
+            <form className='rounded bg-white p-10 shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng ký</div>
               <Input
                 className='mt-8'
@@ -107,16 +107,16 @@ export default function Register() {
               <div className='mt-8'>
                 <Button
                   type='submit'
-                  className='w-full text-center py-4 px-2 uppercase bg-customOrange hover:bg-red-600 text-white text-sm'
+                  className='w-full bg-customOrange px-2 py-4 text-center text-sm uppercase text-white hover:bg-red-600'
                   isLoading={registerAccountMutation.isPending}
                   disabled={registerAccountMutation.isPending}
                 >
                   Đăng ký
                 </Button>
               </div>
-              <div className='flex justify-center mt-8'>
+              <div className='mt-8 flex justify-center'>
                 <span className='text-gray-400'>Bạn đã có tài khoản ? </span>
-                <Link to={path.login} className='text-customOrange ml-1'>
+                <Link to={path.login} className='ml-1 text-customOrange'>
                   Đăng nhập
                 </Link>
               </div>

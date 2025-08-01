@@ -16,6 +16,7 @@ export default function QuantityController({
   onChangeInput,
   classNameWrapper = 'ml-10',
   value,
+  // disabled,
   ...rest
 }: QuantityProps) {
   // mục đích giúp component đa dạng hơn, khi ng dùng k truyền value từ bên ngoài vẫn có thể thực hiện được
@@ -34,7 +35,6 @@ export default function QuantityController({
 
   const handleIncrease = () => {
     let _value = localValue + 1
-    console.log('_value: ', _value)
     if (max !== undefined && _value > max) {
       return (_value = max)
     } else if (_value < 1) {
@@ -55,11 +55,11 @@ export default function QuantityController({
     setLocalValue(_value)
   }
   return (
-    <div className={` flex items-center` + classNameWrapper}>
+    <div className={`flex items-center` + classNameWrapper}>
       {/* minus & plus*/}
       <button
         onClick={handleDecrease}
-        className={`flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 ${value === 1 ? 'text-slate-300 cursor-default' : ' text-gray-600'}`}
+        className={`flex h-8 w-12 items-center justify-center rounded-l-sm border border-gray-300 ${value === 1 ? 'cursor-default text-slate-300' : 'text-gray-600'}`}
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -67,20 +67,22 @@ export default function QuantityController({
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-5 h-5'
+          className='h-5 w-5'
         >
           <path strokeLinecap='round' strokeLinejoin='round' d='M5 12h14' />
         </svg>
       </button>
       <InputNumber
         classNameError='hidden'
-        classNameInput='w-14 h-8 border-t border-b border-gray-300 p-1 text-center outline-none text-customOrange'
+        classNameInput='w-10 h-8 border-t border-b border-gray-300 p-1 text-center outline-none text-customOrange'
         onChange={handleChange}
-        value={value}
+        value={localValue}
+        {...rest}
       />
       <button
         onClick={handleIncrease}
-        className='flex h-8 w-8 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'
+        // disabled={disabled}
+        className='flex h-8 w-12 items-center justify-center rounded-l-sm border border-gray-300 text-gray-600'
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -88,7 +90,7 @@ export default function QuantityController({
           viewBox='0 0 24 24'
           strokeWidth={1.5}
           stroke='currentColor'
-          className='w-5 h-5'
+          className='h-5 w-5'
         >
           <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
         </svg>

@@ -56,7 +56,6 @@ export default function Header() {
   })
 
   const productIncart = productInCartData?.data.data as Purchase[]
-  console.log('productIncart: ', productIncart)
 
   const handleSubmitSearch = handleSubmit((data) => {
     console.log('data search: ', data)

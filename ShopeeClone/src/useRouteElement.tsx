@@ -11,6 +11,7 @@ import path from './constants/path'
 import ProductDetail from './pages/ProductDetail'
 import NotFound from './pages/NotFound'
 import Cart from './pages/Cart'
+import CartLayout from './layouts/CartLayout/CartLayout'
 
 const ProtectedRoute = () => {
   const { isAuthenticated } = useContext(AppContext)
@@ -64,9 +65,9 @@ export default function useRouteElement() {
         {
           path: path.cart,
           element: (
-            <MainLayout>
+            <CartLayout>
               <Cart />
-            </MainLayout>
+            </CartLayout>
           )
         }
       ]

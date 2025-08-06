@@ -265,12 +265,12 @@ export default function Cart() {
                 onChange={handleCheckAll}
               />
             </div>
-            <button className=': mx-1 border-none bg-none text-sm capitalize sm:mx-3 sm:text-lg'>
+            <button className=': mx-1 border-none bg-none text-sm capitalize md:mx-3 md:text-lg'>
               Chọn tất cả ({listProductIncart?.length})
             </button>
             <button
               onClick={handleDeleteManyPurchases}
-              className='ml-auto border-none bg-none text-sm capitalize sm:mx-3 sm:text-lg'
+              className='ml-auto border-none bg-none text-sm capitalize md:mx-3 md:text-lg'
             >
               xoá ({countPurchasesChecked})
             </button>
@@ -279,12 +279,12 @@ export default function Cart() {
           <div className='my-5 flex flex-col sm:ml-auto sm:justify-center'>
             <div className='flex items-center sm:justify-end'>
               <span className='text-xs sm:text-lg'>Tổng cộng ({countPurchasesChecked} sản phẩm): </span>
-              <span className='ml-2 text-customOrange sm:text-2xl'>₫ {formatCurrency(totalPricePurchasesChecked)}</span>
+              <span className='ml-2 text-customOrange md:text-2xl'>₫ {formatCurrency(totalPricePurchasesChecked)}</span>
             </div>
             {purchasesChecked && purchasesChecked.length > 0 && (
-              <div className='items-centertext-sm flex sm:justify-end'>
+              <div className='items-centertext-sm flex md:justify-end'>
                 <span className='text-gray-700'>Tiết kiệm:</span>
-                <span className='ml-2 text-customOrange line-through sm:ml-12'>
+                <span className='ml-2 text-customOrange line-through md:ml-12'>
                   ₫ {formatCurrency(totalPriceSavingPurchasesChecked)}
                 </span>
               </div>
@@ -293,7 +293,7 @@ export default function Cart() {
           <Button
             onClick={handleBuyPurchases}
             disabled={countPurchasesChecked === 0 || buyPurchaesMutation.isPending}
-            className='rounded-sm bg-customOrange px-10 py-2 capitalize text-white hover:bg-customOrange/80 sm:ml-3'
+            className='rounded-sm bg-customOrange px-10 py-2 capitalize text-white hover:bg-customOrange/80 md:ml-3'
           >
             Mua hàng
           </Button>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import NavHeader from '../NavHeader'
 import useSearchProduct from 'src/hooks/useSearchProduct'
+import path from 'src/constants/path'
 
 export default function CartHeader() {
   const { handleSubmitSearch, register } = useSearchProduct()
@@ -15,7 +16,7 @@ export default function CartHeader() {
       <div className='my-1 py-6'>
         <div className='custom-container'>
           <nav className='items-end md:flex md:justify-between'>
-            <Link to='/' className='flex flex-shrink-0 items-end'>
+            <Link to={path.home} className='flex flex-shrink-0 items-end'>
               <div>
                 <svg viewBox='0 0 192 65' className='h-8 w-auto'>
                   <g fillRule='evenodd'>

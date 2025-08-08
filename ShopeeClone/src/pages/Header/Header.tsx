@@ -73,9 +73,9 @@ export default function Header() {
             <Popover
               className=''
               renderPopover={
-                <div className='relative max-w-[400px] rounded-sm border border-gray-200 bg-white text-sm shadow-sm'>
+                <div className='relative mr-3 max-w-[400px] rounded border border-gray-200 bg-white text-sm shadow'>
                   <div className='p-2'>
-                    {productInCartData ? (
+                    {productIncart && productIncart.length > 0 ? (
                       <>
                         <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
                         <div className='mt-5'>
@@ -121,6 +121,12 @@ export default function Header() {
                       <div className='flex h-[200px] w-[350px] flex-col items-center justify-center p-10'>
                         <img className='h-32 w-32 object-contain' src={emptyCart} alt='empty-cart' />
                         <span className='capitalize text-slate-300'> Chưa có sản phẩm</span>
+                        <Link
+                          to={path.cart}
+                          className='mt-2 rounded-sm bg-customOrange px-3 py-1 text-xs capitalize text-white hover:bg-customOrange/80'
+                        >
+                          Xem giỏ hàng
+                        </Link>
                       </div>
                     )}
                   </div>

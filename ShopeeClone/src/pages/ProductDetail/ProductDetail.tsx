@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { data, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import CountDown from 'src/Components/CountDown'
 import ProductRating from 'src/Components/ProductRating'
@@ -12,6 +12,7 @@ import QuantityController from 'src/Components/QuantityController'
 import purchaseAPI from 'src/apis/purchase.api'
 import { PurchaseStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
+import path from 'src/constants/path'
 
 type FormAddToCart = {
   product_id: string
@@ -24,6 +25,7 @@ export type QueryconfigType = {
 
 export default function ProductDetail() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromURLNameId(nameId as string)
@@ -115,10 +117,20 @@ export default function ProductDetail() {
           queryClient.invalidateQueries({
             queryKey: ['purchases', { status: PurchaseStatus.inCart }]
           }),
-            toast.success(data.data.message, { autoClose: 1500 })
+            toast.success(data.data.message, { autoClose: 1000 })
         }
       }
     )
+  }
+
+  const buyNow = async () => {
+    const res = await addToCartMutaion.mutateAsync({ buy_count: buyCount, product_id: product?._id as string })
+    const purchase = res.data.data
+    navigate(path.cart, {
+      state: {
+        purchaseId: purchase._id
+      }
+    })
   }
 
   if (!product) return null
@@ -130,13 +142,13 @@ export default function ProductDetail() {
             {/* image product */}
             <div className='col-span-5'>
               <div
-                className='relative w-full pt-[100%] overflow-hidden'
+                className='relative w-full overflow-hidden pt-[100%]'
                 onMouseMove={handleZoomIn}
                 onMouseLeave={handleZoomOut}
               >
                 <img
                   src={activeImage}
-                  className='absolute pointer-events-none top-0 left-0 w-full h-full bg-white object-cover'
+                  className='pointer-events-none absolute left-0 top-0 h-full w-full bg-white object-cover'
                   ref={imageRef}
                 />
               </div>
@@ -152,7 +164,7 @@ export default function ProductDetail() {
                     viewBox='0 0 24 24'
                     strokeWidth={2.5}
                     stroke='currentColor'
-                    className='w-5 h-5'
+                    className='h-5 w-5'
                   >
                     <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5 8.25 12l7.5-7.5' />
                   </svg>
@@ -164,7 +176,7 @@ export default function ProductDetail() {
                       <img
                         src={img}
                         alt=''
-                        className='absolute top-0 left-0 w-full h-full bg-white object-cover border'
+                        className='absolute left-0 top-0 h-full w-full border bg-white object-cover'
                       />
                       {isActive && <div className='absolute inset-0 border-2 border-customOrange'></div>}
                     </div>
@@ -191,7 +203,7 @@ export default function ProductDetail() {
             {/* content product */}
             <div className='col-span-7'>
               {/* title */}
-              <div className='text-xl uppercase font-medium'>{product.name}</div>
+              <div className='text-xl font-medium uppercase'>{product.name}</div>
               {/* rating & sold */}
               <div className='mt-5 flex items-center'>
                 {/* display rating */}
@@ -205,15 +217,15 @@ export default function ProductDetail() {
                   />
                 </div>
                 {/* display sold */}
-                <div className='bg-gray-200 w-[1.5px] h-5 mx-3'></div>
+                <div className='mx-3 h-5 w-[1.5px] bg-gray-200'></div>
                 <span className='mr-2 border-b border-b-customOrange text-black'>
                   {formarNumberToSocialStyle(product.sold)}
                 </span>
-                <span className='text-gray-400 text-sm'> Đã bán</span>
+                <span className='text-sm text-gray-400'> Đã bán</span>
               </div>
               {/* price */}
-              <div className='relative w-full flex flex-row mt-8'>
-                <div className='absolute top-0 left-0 h-9 w-full bg-customOrange text-white px-3 flex items-center justify-between'>
+              <div className='relative mt-8 flex w-full flex-row'>
+                <div className='absolute left-0 top-0 flex h-9 w-full items-center justify-between bg-customOrange px-3 text-white'>
                   <span className='text-2xl font-bold uppercase'>flash sale</span>
                   <div className='flex items-center'>
                     <svg
@@ -241,7 +253,7 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 </div>
-                <div className='mt-8 flex items-center bg-gray-50 px-5 py-6 w-full'>
+                <div className='mt-8 flex w-full items-center bg-gray-50 px-5 py-6'>
                   {/* before discount */}
                   <div className='text-gray-400 line-through'>₫{formatCurrency(product.price_before_discount)}</div>
                   {/* after discount */}
@@ -257,13 +269,13 @@ export default function ProductDetail() {
                       strokeWidth={2}
                       strokeLinecap='round'
                       strokeLinejoin='round'
-                      className='w-7 h-7 ml-3'
+                      className='ml-3 h-7 w-7'
                     >
                       <path d='M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z' />
                       <path d='m9 12 2 2 4-4' />
                     </svg>
                   </div>
-                  <div className='ml-1 rounded-sm bg-customOrange px-2 py-1 text-xs text-white font-semibold uppercase'>
+                  <div className='ml-1 rounded-sm bg-customOrange px-2 py-1 text-xs font-semibold uppercase text-white'>
                     {salePercent(product.price_before_discount, product.price)} giảm
                   </div>
                 </div>
@@ -281,15 +293,18 @@ export default function ProductDetail() {
                 <div className='ml-6 text-sm text-gray-500'>{product.quantity} Sản phẩm có sẵn</div>
               </div>
               {/* button add */}
-              <div onClick={addToCart} className='mt-10 flex items-center'>
-                <div className='flex px-6 h-12 justify-center items-center text-customOrange bg-customOrange/10 hover:bg-customOrange/5 border border-customOrange text-sm capitalize cursor-pointer'>
+              <div className='mt-10 flex items-center'>
+                <button
+                  onClick={addToCart}
+                  className='flex h-12 cursor-pointer items-center justify-center border border-customOrange bg-customOrange/10 px-6 text-sm capitalize text-customOrange hover:bg-customOrange/5'
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
                     viewBox='0 0 24 24'
                     strokeWidth={1.5}
                     stroke='currentColor'
-                    className='w-5 h-5 mr-2'
+                    className='mr-2 h-5 w-5'
                   >
                     <path
                       strokeLinecap='round'
@@ -298,10 +313,13 @@ export default function ProductDetail() {
                     />
                   </svg>
                   <span>Thêm vào giỏ hàng</span>
-                </div>
-                <div className='ml-6 px-10 h-12  flex justify-center items-center text-white bg-customOrange hover:bg-customOrange/80 outline-none cursor-pointer capitalize'>
+                </button>
+                <button
+                  onClick={buyNow}
+                  className='ml-6 flex h-12 cursor-pointer items-center justify-center bg-customOrange px-10 capitalize text-white outline-none hover:bg-customOrange/80'
+                >
                   Mua ngay
-                </div>
+                </button>
               </div>
             </div>
           </div>
@@ -311,7 +329,7 @@ export default function ProductDetail() {
       <div className='custom-container'>
         <div className='mt-8 bg-white p-4 shadow'>
           <div className='rounded bg-gray-50 p-4 text-lg capitalize text-slate-700'>mô tả sản phẩm</div>
-          <div className='mx-4 mt-5 mb-4 text-sm leading-loose'>
+          <div className='mx-4 mb-4 mt-5 text-sm leading-loose'>
             <div
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(product.description)
@@ -324,7 +342,7 @@ export default function ProductDetail() {
       <div className='custom-container'>
         <div className='mt-8 bg-white p-4 shadow'>
           {ProductData && (
-            <div className='mt-6  grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4'>
+            <div className='mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5'>
               {ProductData.data.data.products.map((product) => (
                 <div className='col-span-1' key={product._id}>
                   <Product product={product} />

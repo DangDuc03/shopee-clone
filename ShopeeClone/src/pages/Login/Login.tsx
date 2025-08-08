@@ -67,9 +67,9 @@ export default function Login() {
   return (
     <div className='bg-customOrange'>
       <div className='custom-container'>
-        <div className='grid grid-cols-1 lg:grid-cols-5 py-10 lg:py-32 lg:pr-10'>
+        <div className='grid grid-cols-1 py-10 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
+            <form className='rounded bg-white p-10 shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng Nhập</div>
               <Input
                 className='mt-8'
@@ -91,16 +91,16 @@ export default function Login() {
               <div className='mt-5'>
                 <Button
                   type='submit'
-                  className='w-full text-center py-4 px-2 uppercase bg-customOrange hover:bg-red-600 text-white text-sm'
+                  className='w-full bg-customOrange px-2 py-4 text-center text-sm uppercase text-white hover:bg-red-600'
                   isLoading={loginAccountMutation.isPending}
                   disabled={loginAccountMutation.isPending}
                 >
                   Đăng Nhập
                 </Button>
               </div>
-              <div className='flex justify-center mt-8'>
+              <div className='mt-8 flex justify-center'>
                 <span className='text-gray-400'>Bạn mới biết đến Shopee ? </span>
-                <Link to={path.register} className='text-customOrange ml-1'>
+                <Link to={path.register} className='ml-1 text-customOrange'>
                   Đăng ký
                 </Link>
               </div>

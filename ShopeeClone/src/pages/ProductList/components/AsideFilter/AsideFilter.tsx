@@ -10,6 +10,7 @@ import { priceSchema, type PriceSchema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import RatingStar from '../RatingStar'
 import { omit } from 'lodash'
+import InputV2 from 'src/Components/InputV2'
 
 interface Iprops {
   queryConfig: QueryconfigType
@@ -50,11 +51,11 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
   }
 
   return (
-    <div className=' py-3 ml-3'>
+    <div className='ml-3 py-3'>
       {/* Category */}
       <Link
         to={path.home}
-        className={classNames('flex items-center font-semibold ml-1', {
+        className={classNames('ml-1 flex items-center font-semibold', {
           'text-customOrange': !category
         })}
       >
@@ -68,7 +69,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
           strokeWidth={2}
           strokeLinecap='round'
           strokeLinejoin='round'
-          className='w-4 h-5'
+          className='h-5 w-4'
         >
           <path d='M11 13v4' />
           <path d='M15 5v4' />
@@ -79,7 +80,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
 
         <span className='ml-1 capitalize'>Tất cả danh mục</span>
       </Link>
-      <div className='bg-gray-300 h-[1px] my-2'></div>
+      <div className='my-2 h-[1px] bg-gray-300'></div>
       <ul className='pb-10'>
         {CategoryData.map((itemsCategory) => {
           const isActive = category === itemsCategory._id
@@ -94,7 +95,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
                   }).toString()
                 }}
                 className={classNames('relative px-2', {
-                  'text-customOrange font-semibold': isActive
+                  'font-semibold text-customOrange': isActive
                 })}
               >
                 {isActive && (
@@ -103,7 +104,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
                     viewBox='0 0 24 24'
                     fill='red'
                     stroke='currentColor'
-                    className='w-5 h-6 absolute top-[-3px] left-[-10px]'
+                    className='absolute left-[-10px] top-[-3px] h-6 w-5'
                   >
                     <path d='m9 18 6-6-6-6' />
                   </svg>
@@ -116,7 +117,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
       </ul>
 
       {/* Filter */}
-      <Link to={path.home} className='flex items-center font-semibold mt-4 ml-1'>
+      <Link to={path.home} className='ml-1 mt-4 flex items-center font-semibold'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           width={24}
@@ -125,13 +126,13 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
           fill='none'
           stroke='currentColor'
           strokeWidth={2}
-          className='w-4 h-5'
+          className='h-5 w-4'
         >
           <path d='M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z' />
         </svg>
         <span className='ml-1'>Bộ lọc tìm kiếm</span>
       </Link>
-      <div className='bg-gray-300 h-[1px] my-2'></div>
+      <div className='my-2 h-[1px] bg-gray-300'></div>
       <div className='my-5 ml-2 pb-10'>
         <span>Khoảng giá</span>
         <form className='mt-3' onSubmit={onSubmit}>
@@ -145,7 +146,7 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
                     type='text'
                     className='grow'
                     placeholder='Từ'
-                    classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm shadow-sm'
+                    classNameInput=' w-full p-1 outline-none border border-gray-300 focus:border-gray-500 rounded-sm shadow-sm'
                     classNameError='hidden'
                     onChange={(event) => {
                       field.onChange(event)
@@ -180,23 +181,23 @@ export default function AsideFilter({ queryConfig, CategoryData }: Iprops) {
               }}
             />
           </div>
-          <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors.price_min?.message}</div>
-          <Button className='w-full p-2 uppercase bg-customOrange text-white hover:bg-customOrange/80 flex justify-center items-center'>
+          <div className='mt-1 min-h-[1.25rem] text-sm text-red-600'>{errors.price_min?.message}</div>
+          <Button className='flex w-full items-center justify-center bg-customOrange p-2 uppercase text-white hover:bg-customOrange/80'>
             <span>Áp dụng</span>
           </Button>
         </form>
       </div>
-      <div className='bg-gray-300 h-[1px] my-2'></div>
+      <div className='my-2 h-[1px] bg-gray-300'></div>
 
       {/* star */}
       <div className='my-3'> Đánh giá</div>
       <RatingStar queryConfig={queryConfig} />
-      <div className='bg-gray-300 h-[1px] my-2'></div>
+      <div className='my-2 h-[1px] bg-gray-300'></div>
 
       {/* DELELE ALL FILTER */}
       <Button
         onClick={handleRemoveAll}
-        className='w-full mt-2 p-2 uppercase bg-customOrange text-white hover:bg-customOrange/80 flex justify-center items-center'
+        className='mt-2 flex w-full items-center justify-center bg-customOrange p-2 uppercase text-white hover:bg-customOrange/80'
       >
         <span>Xoá tất cả</span>
       </Button>

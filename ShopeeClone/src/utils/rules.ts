@@ -52,6 +52,6 @@ export const priceSchema = yup.object({
 export type Schema = yup.InferType<typeof schema>
 export type PriceSchema = yup.InferType<typeof priceSchema>
 
-// schema for login form
+// schema for auth form
 export const loginSchema = schema.omit(['confirm_password', 'name'])
 export type LoginSchema = yup.InferType<typeof loginSchema>

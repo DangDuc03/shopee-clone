@@ -12,7 +12,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // distable refetch when forcus screen
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
+      retry: 0
     }
   }
 })

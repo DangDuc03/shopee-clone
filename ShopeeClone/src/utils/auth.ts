@@ -1,5 +1,6 @@
-import type { UserInfo } from 'os'
 import type { User } from 'src/types/user.type'
+
+export const localStorageeEventTarget = new EventTarget()
 
 export const setAccessTokenToLS = (access_token: string) => {
   localStorage.setItem('access_token', access_token)
@@ -12,6 +13,7 @@ export const getAccessTokenFromLS = (): string => {
 export const removeLS = (): void => {
   localStorage.removeItem('access_token')
   localStorage.removeItem('profile')
+  localStorageeEventTarget.dispatchEvent(new Event('clearLS')) // Dispatch an event to notify other parts of the app
 }
 
 export const setProfileToLS = (profile: User) => {
